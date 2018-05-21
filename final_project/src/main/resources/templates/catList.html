@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/>  <!-- NOTE charles changed from "ISO-8859-1" -->
+<!--
+<script type="text/javascript" src="/webjars/jquery/3.3.1-1/jquery.min.js"></script>
+<script type="text/javascript" src="/webjars/bootstrap/4.0.0-2/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="/webjars/bootstrap/4.0.0-2/css/bootstrap.min.css" />
+-->
+<script type="text/javascript" 
+		src="http://cdn.jsdelivr.net/webjars/jquery/3.3.1-1/jquery.min.js"
+		th:src="@{/webjars/jquery/3.3.1-1/jquery.min.js}">
+</script>
+<script type="text/javascript"
+		src="http://cdn.jsdelivr.net/webjars/bootstrap/4.0.0-2/js/bootstrap.min.js" 
+		th:src="@{/webjars/bootstrap/4.0.0-2/js/bootstrap.min.js}">
+</script>
+<link rel="stylesheet"
+	  href="http://cdn.jsdelivr.net/webjars/bootstrap/4.0.0-2/css/bootstrap.min.css" 
+	  th:href="@{/webjars/bootstrap/4.0.0-2/css/bootstrap.min.css}" />
+
+<script type="text/javascript"
+		src="../static/js/catList.js" 
+		th:src="@{/js/catList.js}">
+</script>
+
+<title>List of Cats</title>
+</head>
+<body>
+	<div class="container">
+		<button class="btn btn-success nBtn">New</button>
+		<div class="card">
+			<div class="card-block">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>Pet ID</th>
+							<th>Name</th>
+							<th>Type</th>
+							<th>Owner Name</th>
+							<th>Address</th>
+							<th>Age</th>
+							<th>IsSpayed</th>
+							<th>Birth date</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="cat :${catsData.content}">
+							<td th:text="${cat.petId}"></td>
+							<td th:text="${cat.name}"></td>
+							<td th:text="${cat.type}"></td>
+							<td th:text="${cat.ownerName}"></td>
+							<td th:text="${cat.address}"></td>
+							<td th:text="${cat.age}"></td>
+							<td th:text="${cat.isSpayed}"></td>
+							<td th:text="${cat.birthdate}"></td>
+							<!-- NOTE charles th:href="@{detail}" is relative path, equivalent to th:href="@{/mvc/student/detail}" -->
+							<td>
+								<a th:href="@{/mvc/cat/detail/(petId=${cat.petId})}" class="btn btn-primary eBtn">Edit</a>
+								<a th:href="@{/mvc/cat/delete/(petId=${cat.petId})}" class="btn btn-danger dBtn">Delete</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>			
+				<hr/>
+				<ul class="nav nav-pills">
+					<li class="nav-item" th:each="i : ${#numbers.sequence(0,catsData.totalPages-1)}">
+						<a th:text="${i}" th:href="@{/mvc/cat/list(page=${i})}" class="nav-link" th:classappend="${currentPage}==${i}?'active':''"></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	
+	<!-- NOTE charles BEF Bootstrap form to edit -->
+	<div class="myForm">
+        <form th:action="@{/mvc/cat/save}" method="post">
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Update/Create</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label for="petId" class="col-form-label">PetId:</label>
+            <input type="text" class="form-control" id="petId" name="petId" value=""/>
+          </div>
+          <div class="form-group">
+            <label for="name" class="col-form-label">Name:</label>
+            <input type="text" class="form-control" id="name" name="name" value=""/>
+          </div>
+          <div class="form-group">
+            <label for="type" class="col-form-label">Type:</label>
+            <input type="text" class="form-control" id="type" name="type" value=""/>
+          </div>
+          <div class="form-group">
+            <label for="ownerName" class="col-form-label">Owner Name:</label>
+            <input type="text" class="form-control" id="ownerName" name="ownerName" value=""/>
+          </div>
+          <div class="form-group">
+            <label for="address" class="col-form-label">Address:</label>
+            <input type="text" class="form-control" id="address" name="address" value=""/>
+          </div>
+          <div class="form-group">
+            <label for="age" class="col-form-label">Age:</label>
+            <input type="text" class="form-control" id="age" name="age" value=""/>
+          </div>
+          <div class="form-group">
+            <label for="isSpayed" class="col-form-label">IsSpayed:</label>
+            <input type="text" class="form-control" id="isSpayed" name="isSpayed" value=""/>
+          </div>
+          <div class="form-group">
+            <label for="birthdate" class="col-form-label">Birth date:</label>
+            <input type="date" class="form-control" id="birthdate" name="birthdate" value=""/>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" value="save"/>
+      </div>
+    </div>
+  </div>
+</div>	
+        </form>
+	</div>
+	
+	<!-- Modal for delete -->
+<div class="modal fade" id="exampleModal4delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Confirm delete</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      	<p class="alert alert-danger">
+      	    charles,do you really want to delete?
+      	</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <a href="" class="btn btn-danger" id="dConfBtn">Delete</a>
+      </div>
+    </div>
+  </div>
+</div>
+	
+	</div>
+</body>
+</html>
